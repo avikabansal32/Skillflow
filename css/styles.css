@@ -8,6 +8,7 @@
   --heading-color: #3E2F20;       /* Headings: Cocoa Noir */
   --highlight-color: #F9C8B4;     /* Highlights: Peach Fuzz */
   --deadline-alert: #F59E0B;      /* Deadlines/Alerts: Amber Lux */
+  --black-olive: #556B2F;         /* Black Olive Accent */
 
   /* Direct semantic aliases */
   --color-bg-main: var(--bg-main);
@@ -137,6 +138,30 @@ button {
 .main-nav {
   display: flex;
   gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.nav-tab {
+  padding: 0.5rem 0.9rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.nav-tab:hover {
+  background-color: var(--bg-main);
+  color: var(--heading-color);
+}
+
+.nav-tab.active {
+  font-weight: 600;
+  color: var(--heading-color);
+  border-bottom: 2px solid var(--black-olive, #556B2F);
 }
 
 .nav-btn {
@@ -197,8 +222,17 @@ button {
 }
 
 /* ==========================================================================
-   Modular View Containers
+   Modular View Containers & Tab Visibility Utilities
    ========================================================================== */
+.app-view.hidden {
+  display: none !important;
+}
+
+.app-view.active {
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
 .view-container {
   display: none;
   animation: fadeIn var(--transition-normal);
@@ -809,9 +843,37 @@ html.profile-completed #view-onboarding:not([style*="display: block"]) {
   color: #B45309;
 }
 
+.badge-status.tomorrow {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #B45309;
+}
+
 .badge-status.locked {
   background-color: rgba(62, 47, 32, 0.08);
   color: var(--color-text-muted);
+}
+
+.schedule-summary-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  margin-top: 0.75rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--heading-color);
+  background: rgba(85, 107, 47, 0.08);
+  border: 1px solid rgba(85, 107, 47, 0.22);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.01em;
+}
+
+.schedule-budget-summary {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 .task-prereqs {

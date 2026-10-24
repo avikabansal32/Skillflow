@@ -33,10 +33,9 @@
       </div>
 
       <nav class="main-nav" aria-label="Main Navigation">
-        <button type="button" class="nav-btn active" data-view="onboarding">Onboarding</button>
-        <button type="button" class="nav-btn" data-view="dashboard">Dashboard</button>
-        <button type="button" class="nav-btn" data-view="roadmap">Roadmap</button>
-        <button type="button" class="nav-btn" data-view="schedule">Daily Schedule</button>
+        <button class="nav-tab active" data-target="view-dashboard">Dashboard</button>
+        <button class="nav-tab" data-target="view-roadmap">Roadmap</button>
+        <button class="nav-tab" data-target="view-schedule">Daily Schedule</button>
         <button type="button" class="nav-btn btn-edit-goals" id="btn-edit-goals" title="Modify your learning goal, level, or daily budget" style="display: none;">Edit Goals</button>
         <button type="button" class="nav-btn btn-logout" id="btn-logout" title="Log out of SkillFlow">Log Out</button>
       </nav>
@@ -184,21 +183,21 @@
     </section>
 
     <!-- 2. Dashboard View Container -->
-    <section id="view-dashboard" class="view-container" aria-labelledby="title-dashboard">
+    <section id="view-dashboard" class="app-view active" aria-labelledby="title-dashboard">
       <div id="dashboard-container" class="view-content-mount">
         <!-- Dashboard widgets and metrics mount dynamically -->
       </div>
     </section>
 
     <!-- 3. Roadmap View Container -->
-    <section id="view-roadmap" class="view-container" aria-labelledby="title-roadmap">
+    <section id="view-roadmap" class="app-view hidden" aria-labelledby="title-roadmap">
       <div id="roadmap-container" class="view-content-mount">
         <!-- Interactive roadmap tree mounts dynamically -->
       </div>
     </section>
 
     <!-- 4. Daily Schedule View Container -->
-    <section id="view-schedule" class="view-container" aria-labelledby="title-schedule">
+    <section id="view-schedule" class="app-view hidden" aria-labelledby="title-schedule">
       <div id="schedule-container" class="view-content-mount">
         <!-- Daily schedule timeline and task checklist mount dynamically -->
       </div>

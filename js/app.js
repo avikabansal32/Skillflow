@@ -25,7 +25,9 @@
    * DOM Elements Cache
    */
   const elements = {
-    navButtons: document.querySelectorAll('.nav-btn'),
+    navTabs: document.querySelectorAll('.nav-tab'),
+    navButtons: document.querySelectorAll('.nav-btn, .nav-tab'),
+    appViews: document.querySelectorAll('.app-view'),
     views: {
       onboarding: document.getElementById('view-onboarding'),
       dashboard: document.getElementById('view-dashboard'),
@@ -42,40 +44,42 @@
 
   /**
    * Switch between primary view containers
-   * @param {string} viewName - Target view id (onboarding, dashboard, roadmap, schedule)
+   * @param {string} viewName - Target view id (e.g. 'dashboard', 'roadmap', 'schedule', 'view-dashboard')
    */
   function navigateTo(viewName) {
-    if (!elements.views[viewName]) return;
+    const targetId = viewName.startsWith('view-') ? viewName : `view-${viewName}`;
+    const tabs = document.querySelectorAll('.nav-tab');
+    const views = document.querySelectorAll('.app-view');
 
-    const isCompleted = localStorage.getItem('skillflow_profile_completed') === 'true';
-    if (!isCompleted && viewName !== 'onboarding') {
-      return; // Force onboarding completion first
-    }
-
-    // Update active nav button
-    elements.navButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.view === viewName);
-    });
-
-    // Toggle active view container
-    Object.entries(elements.views).forEach(([name, container]) => {
-      if (container) {
-        if (name === viewName) {
-          container.style.display = 'block';
-          container.classList.add('active');
-        } else {
-          container.classList.remove('active');
-          if (name === 'onboarding' && isCompleted) {
-            container.style.display = 'none';
-          }
-        }
+    // Update active tab style
+    tabs.forEach(tab => {
+      const tabTarget = tab.getAttribute('data-target');
+      if (tabTarget === targetId) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
       }
     });
 
-    state.currentView = viewName;
+    // Show selected view, hide others
+    views.forEach(view => {
+      if (view.id === targetId) {
+        view.classList.remove('hidden');
+        view.classList.add('active');
+      } else {
+        view.classList.add('hidden');
+        view.classList.remove('active');
+      }
+    });
 
-    if (viewName === 'dashboard') {
+    state.currentView = targetId.replace('view-', '');
+
+    if (targetId === 'view-dashboard') {
       renderDashboard();
+    } else if (targetId === 'view-schedule' && window.SkillFlowScheduler) {
+      window.SkillFlowScheduler.renderSchedule();
+    } else if (targetId === 'view-roadmap' && window.SkillFlowRoadmap) {
+      window.SkillFlowRoadmap.renderRoadmap();
     }
   }
 
@@ -85,8 +89,9 @@
    */
   function applyOnboardingGating() {
     const isCompleted = localStorage.getItem('skillflow_profile_completed') === 'true';
-    const navOnboarding = document.querySelector('.nav-btn[data-view="onboarding"]');
     const btnEditGoals = document.getElementById('btn-edit-goals');
+    const tabs = document.querySelectorAll('.nav-tab');
+    const views = document.querySelectorAll('.app-view');
 
     if (isCompleted) {
       // 1. Keep the onboarding container hidden
@@ -95,30 +100,22 @@
         elements.views.onboarding.classList.remove('active');
       }
 
-      // Hide the initial "Onboarding" nav tab
-      if (navOnboarding) {
-        navOnboarding.style.display = 'none';
-      }
-
       // Show "Edit Goals" button in navbar
       if (btnEditGoals) {
         btnEditGoals.style.display = 'inline-flex';
       }
 
-      // Directly show and enable main app nav buttons (Dashboard, Roadmap, Schedule)
-      elements.navButtons.forEach(btn => {
-        if (btn.dataset.view && btn.dataset.view !== 'onboarding') {
-          btn.style.display = 'inline-flex';
-          btn.disabled = false;
-        }
+      // Enable and display main app nav tabs
+      tabs.forEach(tab => {
+        tab.style.display = 'inline-flex';
+        tab.disabled = false;
       });
 
       // Directly render and show the dashboard
-      if (state.currentView === 'onboarding' || !state.currentView) {
-        navigateTo('dashboard');
-      } else {
-        navigateTo(state.currentView);
-      }
+      const targetView = (state.currentView && state.currentView !== 'onboarding')
+        ? state.currentView
+        : 'dashboard';
+      navigateTo(targetView);
     } else {
       // 2. Profile NOT completed: Show onboarding container & keep main dashboard hidden
       if (elements.views.onboarding) {
@@ -127,32 +124,18 @@
       }
 
       // Keep dashboard, roadmap, schedule containers hidden
-      if (elements.views.dashboard) {
-        elements.views.dashboard.classList.remove('active');
-      }
-      if (elements.views.roadmap) {
-        elements.views.roadmap.classList.remove('active');
-      }
-      if (elements.views.schedule) {
-        elements.views.schedule.classList.remove('active');
-      }
+      views.forEach(view => {
+        view.classList.add('hidden');
+        view.classList.remove('active');
+      });
 
-      // Show only Onboarding tab as active
-      if (navOnboarding) {
-        navOnboarding.style.display = 'inline-flex';
-        navOnboarding.classList.add('active');
-      }
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+      });
 
       if (btnEditGoals) {
         btnEditGoals.style.display = 'none';
       }
-
-      // Hide main app nav tabs until onboarding is completed
-      elements.navButtons.forEach(btn => {
-        if (btn.dataset.view && btn.dataset.view !== 'onboarding') {
-          btn.style.display = 'none';
-        }
-      });
 
       state.currentView = 'onboarding';
     }

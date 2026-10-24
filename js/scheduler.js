@@ -138,38 +138,89 @@
    * Get cached IDs assigned to today, if any
    */
   function getTodayAssignedIds() {
-    try {
-      const raw = localStorage.getItem(STORAGE_TODAY_CACHE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (err) {
-      return null;
-    }
+    return null;
   }
 
   /**
    * Save cached IDs assigned to today
    */
   function saveTodayAssignedIds(ids) {
-    try {
-      localStorage.setItem(STORAGE_TODAY_CACHE_KEY, JSON.stringify(ids));
-    } catch (err) {
-      console.warn('SkillFlow [Scheduler]: Could not cache today IDs', err);
-    }
+    // No-op: Scheduling is deterministic and packs multiple tasks dynamically
   }
 
   /**
    * Core Deterministic Task Scheduling Engine
-   * Strictly filters tasks for 'Today' up to daily budget respecting prerequisite completion.
-   * Seamlessly handles standard and adaptive rescheduled plans.
+   * Packs multiple tasks into "Today's Schedule" strictly up to the user's daily study budget,
+   * respecting sequential stage and prerequisite task dependencies.
+   *
+   * @param {Object} activeTrack
+   * @param {number} [standardBudgetMin]
+   * @param {Object.<string, boolean>} [completionsOverride]
+   * @returns {{
+   *   todaysTasks: Array,
+   *   todayTasks: Array,
+   *   upcomingTasks: Array,
+   *   totalBudget: number,
+   *   remainingTime: number,
+   *   plannedTime: number,
+   *   allocatedMinutes: number,
+   *   effectiveBudget: number,
+   *   standardBudgetMin: number,
+   *   isAdaptive: boolean,
+   *   adaptivePlan: Object|null,
+   *   allOrderedTasks: Array
+   * }}
    */
-  function computeDailySchedule(activeTrack, standardBudgetMin, completions) {
+  function computeDailySchedule(activeTrack, standardBudgetMin, completionsOverride) {
+    const profile = getUserProfile();
+    const completions = completionsOverride !== undefined ? completionsOverride : getTaskCompletions();
     const adaptivePlan = getAdaptivePlan();
     const isAdaptive = Boolean(adaptivePlan && adaptivePlan.isAdapted);
-    const effectiveBudget = isAdaptive ? adaptivePlan.adaptedBudgetMin : standardBudgetMin;
 
+    // 1. Retrieve the user's daily available time in minutes (dailyMinutes = parseInt(userProfile.dailyTime) || 60)
+    let dailyMinutes = standardBudgetMin !== undefined
+      ? parseInt(standardBudgetMin, 10)
+      : (profile ? (parseInt(profile.dailyTime, 10) || parseInt(profile.dailyBudgetMin, 10) || 60) : 60);
+
+    if (isNaN(dailyMinutes) || dailyMinutes <= 0) {
+      dailyMinutes = 60;
+    }
+
+    const totalBudget = isAdaptive ? (adaptivePlan.adaptedBudgetMin || 30) : dailyMinutes;
+
+    // 2. Keep a running tally: let remainingTime = dailyMinutes; let todaysTasks = [];
+    let remainingTime = totalBudget;
+    const todaysTasks = [];
+    const upcomingTasks = [];
+
+    // Track completed tasks and tasks scheduled for today
+    const completedIds = new Set(
+      Object.keys(completions).filter(id => Boolean(completions[id]))
+    );
+    const satisfiedPrereqs = new Set(completedIds);
+
+    // Guard against missing track
+    if (!activeTrack || !Array.isArray(activeTrack.stages)) {
+      return {
+        todaysTasks,
+        todayTasks: todaysTasks,
+        upcomingTasks,
+        totalBudget,
+        remainingTime,
+        plannedTime: 0,
+        allocatedMinutes: 0,
+        effectiveBudget: totalBudget,
+        standardBudgetMin: dailyMinutes,
+        isAdaptive,
+        adaptivePlan,
+        allOrderedTasks: []
+      };
+    }
+
+    // Flatten all roadmap tasks in sequential stage order
     const allOrderedTasks = [];
     activeTrack.stages.forEach(stage => {
-      stage.tasks.forEach(task => {
+      (stage.tasks || []).forEach(task => {
         allOrderedTasks.push({
           ...task,
           stageTitle: stage.title,
@@ -179,100 +230,55 @@
       });
     });
 
-    const completedIds = new Set(
-      Object.keys(completions).filter(id => completions[id])
-    );
-
-    const todayTasks = [];
-    const upcomingTasks = [];
-    let allocatedMinutes = 0;
-
-    let cachedTodayIds = getTodayAssignedIds();
-
-    // Check if cached IDs belong to current track and are valid
-    let useCachedSchedule = false;
-    if (!isAdaptive && cachedTodayIds && Array.isArray(cachedTodayIds) && cachedTodayIds.length > 0) {
-      const allTrackTaskIds = new Set(allOrderedTasks.map(t => t.id));
-      const hasInvalidId = cachedTodayIds.some(id => !allTrackTaskIds.has(id));
-      if (!hasInvalidId) {
-        useCachedSchedule = true;
+    // 3. Loop through the uncompleted roadmap tasks in sequential/dependency order:
+    allOrderedTasks.forEach(task => {
+      if (task.isCompleted) {
+        return;
       }
-    }
 
-    if (useCachedSchedule) {
-      // Reconstitute today's schedule preserving user's current session tasks
-      const todayIdSet = new Set(cachedTodayIds);
-      allOrderedTasks.forEach(task => {
-        if (todayIdSet.has(task.id)) {
-          allocatedMinutes += task.durationMin;
-          todayTasks.push(task);
-        } else {
-          const prereqs = task.prerequisites || [];
-          const prereqsMet = prereqs.every(pId => completedIds.has(pId));
-          upcomingTasks.push({
-            ...task,
-            scheduleReason: prereqsMet ? "Exceeds today's budget" : "Prerequisites pending"
-          });
-        }
-      });
-    } else {
-      // Fresh compute or Adaptive reschedule:
-      // Allocate tasks strictly respecting prerequisite hierarchy
-      const simulatedUnlocked = new Set(completedIds);
+      // Check if the task's prerequisites are all completed
+      const prereqs = task.prerequisites || [];
+      const arePrereqsMet = prereqs.every(pId => satisfiedPrereqs.has(pId));
 
-      allOrderedTasks.forEach(task => {
-        if (task.isCompleted) {
-          // Task completed in previous session
-          upcomingTasks.push({
-            ...task,
-            scheduleReason: 'Completed in earlier session'
-          });
-          simulatedUnlocked.add(task.id);
-          return;
-        }
+      // If task.durationMin <= remainingTime
+      if (arePrereqsMet && task.durationMin <= remainingTime) {
+        // Add this task to todaysTasks
+        todaysTasks.push(task);
+        // Subtract task.durationMin from remainingTime
+        remainingTime -= task.durationMin;
+        // Mark as satisfied for downstream tasks scheduled in today's session
+        satisfiedPrereqs.add(task.id);
+      } else {
+        // Push it into the upcomingTasks / "Next Up" queue instead of today's schedule
+        const reason = !arePrereqsMet
+          ? 'Prerequisites pending'
+          : (isAdaptive ? 'Rescheduled for tomorrow' : "Exceeds today's budget");
+        upcomingTasks.push({
+          ...task,
+          scheduleReason: reason
+        });
+      }
+    });
 
-        const prereqs = task.prerequisites || [];
-        const arePrereqsMet = prereqs.every(pId => simulatedUnlocked.has(pId));
-
-        if (!arePrereqsMet) {
-          upcomingTasks.push({
-            ...task,
-            scheduleReason: 'Prerequisites pending'
-          });
-          return;
-        }
-
-        // Prerequisites are satisfied. Can it fit in the effective budget?
-        if (allocatedMinutes + task.durationMin <= effectiveBudget) {
-          allocatedMinutes += task.durationMin;
-          todayTasks.push(task);
-          simulatedUnlocked.add(task.id);
-        } else {
-          // Overflow task: if adaptive plan is active, mark for tomorrow's queue
-          upcomingTasks.push({
-            ...task,
-            scheduleReason: isAdaptive ? "Rescheduled for tomorrow" : "Exceeds today's budget"
-          });
-        }
-      });
-
-      // Save today's task IDs to preserve them as user checks them off
-      saveTodayAssignedIds(todayTasks.map(t => t.id));
-    }
-
-    // Sort upcoming tasks so that overflow tasks from tomorrow's queue appear first
+    // Sort upcoming tasks so overflow tasks rescheduled for tomorrow appear first if adaptive
     upcomingTasks.sort((a, b) => {
-      const aTomorrow = a.scheduleReason === "Rescheduled for tomorrow" ? 1 : 0;
-      const bTomorrow = b.scheduleReason === "Rescheduled for tomorrow" ? 1 : 0;
+      const aTomorrow = a.scheduleReason === 'Rescheduled for tomorrow' ? 1 : 0;
+      const bTomorrow = b.scheduleReason === 'Rescheduled for tomorrow' ? 1 : 0;
       return bTomorrow - aTomorrow;
     });
 
+    const plannedTime = totalBudget - remainingTime;
+
     return {
-      todayTasks,
+      todaysTasks,
+      todayTasks: todaysTasks,
       upcomingTasks,
-      allocatedMinutes,
-      effectiveBudget,
-      standardBudgetMin,
+      totalBudget,
+      remainingTime,
+      plannedTime,
+      allocatedMinutes: plannedTime,
+      effectiveBudget: totalBudget,
+      standardBudgetMin: dailyMinutes,
       isAdaptive,
       adaptivePlan,
       allOrderedTasks
@@ -430,13 +436,13 @@
 
     const profile = getUserProfile();
     const activeTrackId = profile ? profile.trackId : 'frontend-web-development';
-    const standardDailyBudget = profile ? (profile.dailyBudgetMin || 60) : 60;
+    const standardDailyBudget = profile ? (parseInt(profile.dailyTime, 10) || parseInt(profile.dailyBudgetMin, 10) || 60) : 60;
     const activeTrack = tracks.find(t => t.id === activeTrackId) || tracks[0];
     const taskDict = buildTaskDictionary(tracks);
     const completions = getTaskCompletions();
 
     const schedule = computeDailySchedule(activeTrack, standardDailyBudget, completions);
-    const todayTasks = schedule.todayTasks;
+    const todayTasks = schedule.todaysTasks;
     const upcomingTasks = schedule.upcomingTasks;
 
     // Metric Calculations
@@ -445,7 +451,9 @@
     const todayTotalCount = todayTasks.length;
     const todayCompletedMinutes = todayCompletedTasks.reduce((sum, t) => sum + (t.durationMin || 0), 0);
     const todayCompletionPct = todayTotalCount > 0 ? Math.round((todayCompletedCount / todayTotalCount) * 100) : 0;
-    const budgetUtilizationPct = Math.min(100, Math.round((schedule.allocatedMinutes / schedule.effectiveBudget) * 100));
+    const budgetUtilizationPct = schedule.totalBudget > 0
+      ? Math.min(100, Math.round((schedule.plannedTime / schedule.totalBudget) * 100))
+      : 0;
 
     // Has unfinished tasks today
     const hasUnfinishedTasks = todayTasks.some(t => !completions[t.id]);
@@ -454,6 +462,10 @@
     const totalTrackTasks = schedule.allOrderedTasks.length;
     const totalTrackCompleted = schedule.allOrderedTasks.filter(t => completions[t.id]).length;
     const overallTrackPct = totalTrackTasks > 0 ? Math.round((totalTrackCompleted / totalTrackTasks) * 100) : 0;
+
+    // Summary Header text according to specification:
+    // "Today's Budget: [Total] mins | Planned: [Total - remainingTime] mins | Remaining: [remainingTime] mins"
+    const summaryHeaderText = `Today's Budget: ${schedule.totalBudget} mins | Planned: ${schedule.totalBudget - schedule.remainingTime} mins | Remaining: ${schedule.remainingTime} mins`;
 
     let html = `
       <!-- Schedule Hero & Daily Budget Gauge -->
@@ -478,11 +490,16 @@
           </div>
         </div>
 
+        <!-- Summary Header Pill -->
+        <div class="schedule-summary-header" id="schedule-summary-header">
+          ${summaryHeaderText}
+        </div>
+
         ${schedule.isAdaptive ? `
           <!-- Adaptive Plan Active Banner -->
           <div class="adaptive-banner">
             <div class="adaptive-banner-text">
-              <span>✨ <strong>New Rhythm Active:</strong> Today's schedule adapted to ${schedule.effectiveBudget} mins. Overflow tasks gently queued for tomorrow.</span>
+              <span>✨ <strong>New Rhythm Active:</strong> Today's schedule adapted to ${schedule.totalBudget} mins. Overflow tasks gently queued for tomorrow.</span>
             </div>
             <button type="button" class="btn-link" id="btn-reset-adaptive">Reset to Standard Plan (${schedule.standardBudgetMin} mins)</button>
           </div>
@@ -492,14 +509,14 @@
         <div class="budget-gauge-box">
           <div class="progress-meta">
             <span class="progress-label">Daily Study Time Budget ${schedule.isAdaptive ? '(Adapted)' : ''}</span>
-            <span class="progress-value">${schedule.allocatedMinutes} / ${schedule.effectiveBudget} mins allocated</span>
+            <span class="progress-value">${schedule.plannedTime} / ${schedule.totalBudget} mins allocated</span>
           </div>
           <div class="progress-track" role="progressbar" aria-valuenow="${budgetUtilizationPct}" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-fill ${budgetUtilizationPct >= 100 ? 'amber' : ''}" style="width: ${budgetUtilizationPct}%;"></div>
           </div>
           <div class="budget-gauge-details">
             <span>Budget Utilized: <strong>${budgetUtilizationPct}%</strong></span>
-            <span>Active Target: <strong>${schedule.effectiveBudget} mins/day</strong></span>
+            <span>Active Target: <strong>${schedule.totalBudget} mins/day</strong></span>
           </div>
         </div>
 
@@ -533,9 +550,12 @@
         <div class="schedule-section-header">
           <h3 id="heading-today-tasks" class="schedule-section-title">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <span>Today's Tasks</span>
+            <span>Today's Schedule</span>
           </h3>
           <span class="highlight-pill">${todayCompletedCount}/${todayTotalCount} Completed</span>
+        </div>
+        <div class="schedule-budget-summary">
+          ${summaryHeaderText}
         </div>
     `;
 

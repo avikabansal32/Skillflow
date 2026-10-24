@@ -228,6 +228,7 @@
       trackTitle: trackMetadata.title,
       experienceLevel,
       dailyBudgetMin,
+      dailyTime: dailyBudgetMin,
       updatedAt: new Date().toISOString()
     };
 
