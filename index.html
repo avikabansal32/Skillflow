@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillFlow — Student Productivity &amp; Roadmap Tool</title>
+  
+  <!-- Inter Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Application Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Global Application Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-logo">
+        <span>SkillFlow</span>
+        <span class="brand-badge">Alpha</span>
+      </div>
+
+      <nav class="main-nav" aria-label="Main Navigation">
+        <button type="button" class="nav-btn active" data-view="onboarding">Onboarding</button>
+        <button type="button" class="nav-btn" data-view="dashboard">Dashboard</button>
+        <button type="button" class="nav-btn" data-view="roadmap">Roadmap</button>
+        <button type="button" class="nav-btn" data-view="schedule">Daily Schedule</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Mount Area -->
+  <main id="app-root" class="app-main">
+
+    <!-- 1. Onboarding View Container -->
+    <section id="view-onboarding" class="view-container active" aria-labelledby="title-onboarding">
+      <div class="card onboarding-card">
+        <header class="section-header">
+          <span class="highlight-pill">Step 1 • Profile Setup</span>
+          <h1 id="title-onboarding">Plan Your Learning Journey</h1>
+          <p class="section-description">
+            Choose your learning track, calibrate your current experience, and set your daily time commitment.
+          </p>
+        </header>
+
+        <div id="onboarding-container" class="view-content-mount">
+          <form id="onboarding-form" novalidate>
+
+            <!-- 1. Goal / Track Selection -->
+            <fieldset class="form-fieldset">
+              <legend class="form-legend">
+                <span class="step-num">1.</span>
+                <span>Select Your Learning Goal / Track</span>
+              </legend>
+              <div class="options-grid" role="radiogroup" aria-label="Learning Track">
+                
+                <label class="option-card" for="track-frontend">
+                  <input type="radio" id="track-frontend" name="track" value="frontend-web-development" required checked>
+                  <div class="option-card-body">
+                    <div class="option-header">
+                      <span class="option-title">Frontend Web Development</span>
+                      <span class="option-tag">3 Stages</span>
+                    </div>
+                    <p class="option-text">Master semantic HTML, CSS layouts (Flexbox &amp; Grid), and vanilla JavaScript DOM interactions.</p>
+                  </div>
+                </label>
+
+                <label class="option-card" for="track-python">
+                  <input type="radio" id="track-python" name="track" value="python-for-data-analysis" required>
+                  <div class="option-card-body">
+                    <div class="option-header">
+                      <span class="option-title">Python for Data Analysis</span>
+                      <span class="option-tag">3 Stages</span>
+                    </div>
+                    <p class="option-text">Work with Python data structures, NumPy vectorization, Pandas wrangling, and exploratory visualization.</p>
+                  </div>
+                </label>
+
+              </div>
+            </fieldset>
+
+            <!-- 2. Experience Level -->
+            <fieldset class="form-fieldset">
+              <legend class="form-legend">
+                <span class="step-num">2.</span>
+                <span>Current Experience Level</span>
+              </legend>
+              <div class="experience-grid" role="radiogroup" aria-label="Experience Level">
+
+                <label class="option-card compact" for="level-beginner">
+                  <input type="radio" id="level-beginner" name="experienceLevel" value="beginner" checked required>
+                  <div class="option-card-body">
+                    <div class="option-header">
+                      <span class="option-title">Beginner</span>
+                    </div>
+                    <p class="option-text">Starting fresh. Learn foundational concepts, core syntax, and essential best practices.</p>
+                  </div>
+                </label>
+
+                <label class="option-card compact" for="level-intermediate">
+                  <input type="radio" id="level-intermediate" name="experienceLevel" value="intermediate" required>
+                  <div class="option-card-body">
+                    <div class="option-header">
+                      <span class="option-title">Intermediate</span>
+                    </div>
+                    <p class="option-text">Already know the basics. Move faster through accelerated practice milestones.</p>
+                  </div>
+                </label>
+
+              </div>
+            </fieldset>
+
+            <!-- 3. Daily Study Time Budget -->
+            <fieldset class="form-fieldset">
+              <legend class="form-legend">
+                <span class="step-num">3.</span>
+                <span>Daily Study Time Budget</span>
+              </legend>
+              <p class="form-help">How many minutes can you reliably dedicate each day?</p>
+              
+              <div class="budget-input-wrapper">
+                <div class="budget-presets" role="group" aria-label="Time presets">
+                  <button type="button" class="btn-preset" data-minutes="30">30 min</button>
+                  <button type="button" class="btn-preset active" data-minutes="60">60 min</button>
+                  <button type="button" class="btn-preset" data-minutes="90">90 min</button>
+                </div>
+
+                <div class="input-with-affix">
+                  <input
+                    type="number"
+                    id="daily-budget-input"
+                    name="dailyBudget"
+                    min="15"
+                    max="480"
+                    step="5"
+                    value="60"
+                    required
+                    aria-describedby="budget-hint"
+                  >
+                  <span class="input-affix">mins / day</span>
+                </div>
+              </div>
+              <span id="budget-hint" class="input-hint">Recommended for students: 45–60 mins/day for optimal retention.</span>
+            </fieldset>
+
+            <!-- Submit Action -->
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" id="btn-save-onboarding">
+                <span>Save &amp; Continue</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+
+            <!-- Live Status Feedback Notification -->
+            <div id="onboarding-feedback" class="onboarding-feedback" aria-live="polite" hidden></div>
+          </form>
+
+          <!-- Persisted Profile Summary Card -->
+          <div id="saved-profile-card" class="saved-profile-card" hidden>
+            <div class="saved-profile-header">
+              <span class="highlight-pill">Active Plan</span>
+              <button type="button" class="btn-link" id="btn-edit-onboarding">Edit Preferences</button>
+            </div>
+            <div class="saved-profile-details" id="saved-profile-content">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Dashboard View Container -->
+    <section id="view-dashboard" class="view-container" aria-labelledby="title-dashboard">
+      <div class="card">
+        <h2 id="title-dashboard">Student Dashboard</h2>
+        <p>Track overall roadmap completion, upcoming milestones, and weekly study streaks.</p>
+        <div id="dashboard-container" class="view-content-mount">
+          <!-- Dashboard widgets and metrics mount here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Roadmap View Container -->
+    <section id="view-roadmap" class="view-container" aria-labelledby="title-roadmap">
+      <div class="card">
+        <h2 id="title-roadmap">Personalized Roadmap</h2>
+        <p>Structured milestones, key skill gaps, and learning modules arranged sequentially.</p>
+        <div id="roadmap-container" class="view-content-mount">
+          <!-- Interactive roadmap tree mounts here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Daily Schedule View Container -->
+    <section id="view-schedule" class="view-container" aria-labelledby="title-schedule">
+      <div class="card">
+        <h2 id="title-schedule">Daily Schedule &amp; Planner</h2>
+        <p>Targeted tasks for today, duration blocks, and adaptive reschedule triggers.</p>
+        <div id="schedule-container" class="view-content-mount">
+          <!-- Daily schedule timeline and task checklist mount here -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Application Scripts -->
+  <script src="js/onboarding.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,539 @@
+:root {
+  /* ==========================================================================
+     Design Tokens (SkillFlow Brand Palette)
+     ========================================================================== */
+  --bg-main: #FAF7F0;             /* Main background: Floral White */
+  --bg-card: #FFFEFA;             /* Cards: Warm White */
+  --primary-action: #556B2F;      /* Primary Actions: Black Olive */
+  --heading-color: #3E2F20;       /* Headings: Cocoa Noir */
+  --highlight-color: #F9C8B4;     /* Highlights: Peach Fuzz */
+  --deadline-alert: #F59E0B;      /* Deadlines/Alerts: Amber Lux */
+
+  /* Direct semantic aliases */
+  --color-bg-main: var(--bg-main);
+  --color-bg-card: var(--bg-card);
+  --color-primary: var(--primary-action);
+  --color-heading: var(--heading-color);
+  --color-highlight: var(--highlight-color);
+  --color-alert: var(--deadline-alert);
+
+  /* Typography Tokens */
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+
+  /* Supporting Neutrals & Utility */
+  --color-text-main: #3E2F20;
+  --color-text-muted: #6B5E51;
+  --color-border: rgba(62, 47, 32, 0.12);
+  --color-border-subtle: rgba(62, 47, 32, 0.06);
+
+  /* Elevation & Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(62, 47, 32, 0.05);
+  --shadow-md: 0 4px 12px rgba(62, 47, 32, 0.08);
+  --shadow-lg: 0 8px 24px rgba(62, 47, 32, 0.1);
+
+  /* Layout Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --container-max-width: 1200px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ==========================================================================
+   CSS Reset & Base Rules
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--color-text-main);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--heading-color);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+a {
+  color: var(--primary-action);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ==========================================================================
+   App Layout Scaffolding
+   ========================================================================== */
+.app-header {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md) var(--spacing-xl);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.brand-badge {
+  background: var(--highlight-color);
+  color: var(--heading-color);
+  font-size: var(--font-size-xs);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.main-nav {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.nav-btn {
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: all var(--transition-fast);
+}
+
+.nav-btn:hover {
+  background-color: var(--bg-main);
+  color: var(--heading-color);
+}
+
+.nav-btn.active {
+  background-color: var(--primary-action);
+  color: #FFFFFF;
+}
+
+.app-main {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+/* ==========================================================================
+   Modular View Containers
+   ========================================================================== */
+.view-container {
+  display: none;
+  animation: fadeIn var(--transition-normal);
+}
+
+.view-container.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card Component */
+.card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Buttons & Interactive Elements */
+.btn-primary {
+  background-color: var(--primary-action);
+  color: #FFFFFF;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.alert-badge {
+  background-color: var(--deadline-alert);
+  color: #FFFFFF;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.highlight-pill {
+  background-color: var(--highlight-color);
+  color: var(--heading-color);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Onboarding Flow Styles
+   ========================================================================== */
+.onboarding-card {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.section-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-header .highlight-pill {
+  margin-bottom: var(--spacing-sm);
+  display: inline-block;
+}
+
+.section-header h1 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-xs);
+}
+
+.section-description {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+.form-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-xl) 0;
+}
+
+.form-legend {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--heading-color);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.form-help {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Track and Option Cards */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.option-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-card);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.option-card:hover {
+  border-color: rgba(85, 107, 47, 0.4);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.option-card input[type="radio"] {
+  margin-top: 0.25rem;
+  accent-color: var(--primary-action);
+  width: 1.15rem;
+  height: 1.15rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.option-card.selected,
+.option-card:has(input[type="radio"]:checked) {
+  border-color: var(--primary-action);
+  background-color: rgba(85, 107, 47, 0.04);
+  box-shadow: 0 0 0 1px var(--primary-action);
+}
+
+.option-card-body {
+  flex: 1;
+}
+
+.option-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.option-title {
+  font-weight: 600;
+  color: var(--heading-color);
+  font-size: var(--font-size-base);
+}
+
+.option-tag {
+  background-color: var(--bg-main);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.option-text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+/* Time Budget Controls */
+.budget-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.budget-presets {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.btn-preset {
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--heading-color);
+  transition: all var(--transition-fast);
+}
+
+.btn-preset:hover {
+  background-color: var(--bg-main);
+  border-color: rgba(85, 107, 47, 0.4);
+}
+
+.btn-preset.active {
+  background-color: var(--primary-action);
+  border-color: var(--primary-action);
+  color: #FFFFFF;
+}
+
+.input-with-affix {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.75rem;
+  transition: border-color var(--transition-fast);
+}
+
+.input-with-affix:focus-within {
+  border-color: var(--primary-action);
+  box-shadow: 0 0 0 1px var(--primary-action);
+}
+
+.input-with-affix input {
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--heading-color);
+  background: transparent;
+  width: 4rem;
+  text-align: right;
+  margin-right: 0.35rem;
+}
+
+.input-affix {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.input-hint {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+/* Actions and Feedback */
+.form-actions {
+  margin-top: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.onboarding-feedback {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  transition: all var(--transition-normal);
+}
+
+.onboarding-feedback.success {
+  background-color: rgba(85, 107, 47, 0.08);
+  border: 1px solid var(--primary-action);
+  color: var(--heading-color);
+}
+
+.onboarding-feedback.error {
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 1px solid var(--deadline-alert);
+  color: var(--heading-color);
+}
+
+/* Saved Profile Active Card */
+.saved-profile-card {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--color-border);
+  border-left: 5px solid var(--primary-action);
+  box-shadow: var(--shadow-sm);
+}
+
+.saved-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.btn-link {
+  color: var(--primary-action);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+}
+
+.btn-link:hover {
+  opacity: 0.8;
+}
+
+.profile-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.meta-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.meta-value {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--heading-color);
+}

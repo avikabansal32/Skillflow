@@ -1,0 +1,192 @@
+{
+  "tracks": [
+    {
+      "id": "frontend-web-development",
+      "title": "Frontend Web Development",
+      "description": "Master semantic HTML, CSS layout engines, and modern JavaScript to build performant, responsive web applications.",
+      "stages": [
+        {
+          "id": "fe-stage-1",
+          "order": 1,
+          "title": "HTML & Semantic Web",
+          "description": "Establish structural foundations with clean semantics, accessible forms, and document outlines.",
+          "tasks": [
+            {
+              "id": "fe-html-basics",
+              "title": "Semantic HTML & Document Architecture",
+              "durationMin": 45,
+              "prerequisites": [],
+              "completed": false
+            },
+            {
+              "id": "fe-forms-accessibility",
+              "title": "Accessible Forms & Input Validation",
+              "durationMin": 45,
+              "prerequisites": ["fe-html-basics"],
+              "completed": false
+            },
+            {
+              "id": "fe-seo-meta",
+              "title": "SEO Fundamentals & Metadata Structure",
+              "durationMin": 30,
+              "prerequisites": ["fe-html-basics"],
+              "completed": false
+            }
+          ]
+        },
+        {
+          "id": "fe-stage-2",
+          "order": 2,
+          "title": "CSS Layout & Responsive Design",
+          "description": "Build flexible, adaptive user interfaces using modern layout engines and custom design tokens.",
+          "tasks": [
+            {
+              "id": "fe-flexbox-grid",
+              "title": "Flexbox & CSS Grid Mastery",
+              "durationMin": 60,
+              "prerequisites": ["fe-html-basics"],
+              "completed": false
+            },
+            {
+              "id": "fe-responsive-design",
+              "title": "Media Queries & Mobile-First Layouts",
+              "durationMin": 45,
+              "prerequisites": ["fe-flexbox-grid"],
+              "completed": false
+            },
+            {
+              "id": "fe-css-variables",
+              "title": "Design Tokens & CSS Custom Properties",
+              "durationMin": 30,
+              "prerequisites": ["fe-responsive-design"],
+              "completed": false
+            }
+          ]
+        },
+        {
+          "id": "fe-stage-3",
+          "order": 3,
+          "title": "JavaScript & DOM Interactions",
+          "description": "Add interactivity, handle user state, and integrate asynchronous web APIs.",
+          "tasks": [
+            {
+              "id": "fe-js-fundamentals",
+              "title": "Modern JS Syntax (ES6+), Scope & Functions",
+              "durationMin": 60,
+              "prerequisites": ["fe-css-variables"],
+              "completed": false
+            },
+            {
+              "id": "fe-dom-events",
+              "title": "DOM Traversal, Event Listeners & State",
+              "durationMin": 60,
+              "prerequisites": ["fe-js-fundamentals"],
+              "completed": false
+            },
+            {
+              "id": "fe-fetch-apis",
+              "title": "Async/Await, Fetch API & LocalStorage Persistence",
+              "durationMin": 45,
+              "prerequisites": ["fe-dom-events"],
+              "completed": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "python-for-data-analysis",
+      "title": "Python for Data Analysis",
+      "description": "Transform, explore, and visualize real-world datasets with Python, Pandas, and Matplotlib.",
+      "stages": [
+        {
+          "id": "py-stage-1",
+          "order": 1,
+          "title": "Python Core & Environment",
+          "description": "Master fundamental Python syntax, built-in data structures, and script execution.",
+          "tasks": [
+            {
+              "id": "py-basics",
+              "title": "Python Data Types, Data Structures & Control Flow",
+              "durationMin": 45,
+              "prerequisites": [],
+              "completed": false
+            },
+            {
+              "id": "py-functions-modules",
+              "title": "Modular Functions, Lambdas & Script Organization",
+              "durationMin": 45,
+              "prerequisites": ["py-basics"],
+              "completed": false
+            },
+            {
+              "id": "py-file-io",
+              "title": "File I/O and JSON/CSV Parsing",
+              "durationMin": 30,
+              "prerequisites": ["py-functions-modules"],
+              "completed": false
+            }
+          ]
+        },
+        {
+          "id": "py-stage-2",
+          "order": 2,
+          "title": "NumPy & Pandas Foundations",
+          "description": "Manipulate tabular data and perform vectorized numerical calculations with ease.",
+          "tasks": [
+            {
+              "id": "py-numpy-arrays",
+              "title": "NumPy Arrays, Indexing & Vectorization",
+              "durationMin": 60,
+              "prerequisites": ["py-basics"],
+              "completed": false
+            },
+            {
+              "id": "py-pandas-series-df",
+              "title": "Pandas Series & DataFrames Wrangling",
+              "durationMin": 60,
+              "prerequisites": ["py-numpy-arrays"],
+              "completed": false
+            },
+            {
+              "id": "py-data-cleaning",
+              "title": "Handling Missing Values & Outlier Filtering",
+              "durationMin": 45,
+              "prerequisites": ["py-pandas-series-df"],
+              "completed": false
+            }
+          ]
+        },
+        {
+          "id": "py-stage-3",
+          "order": 3,
+          "title": "Exploratory Analysis & Visualization",
+          "description": "Aggregate data groups and craft compelling analytical charts and reports.",
+          "tasks": [
+            {
+              "id": "py-grouping-aggregations",
+              "title": "GroupBy Aggregations & Pivot Tables",
+              "durationMin": 60,
+              "prerequisites": ["py-data-cleaning"],
+              "completed": false
+            },
+            {
+              "id": "py-matplotlib-seaborn",
+              "title": "Data Visualization with Matplotlib & Seaborn",
+              "durationMin": 60,
+              "prerequisites": ["py-grouping-aggregations"],
+              "completed": false
+            },
+            {
+              "id": "py-eda-capstone",
+              "title": "End-to-End Exploratory Data Analysis Case Study",
+              "durationMin": 60,
+              "prerequisites": ["py-matplotlib-seaborn"],
+              "completed": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
