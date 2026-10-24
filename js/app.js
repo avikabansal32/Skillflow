@@ -424,3 +424,8 @@
   // Bootstrap when DOM is fully parsed
   document.addEventListener('DOMContentLoaded', init);
 })();
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await StorageDB.initDB();
+  // rest of your app initialization...
+});
