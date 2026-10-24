@@ -282,11 +282,44 @@
    * Bind event listeners for UI navigation & profile updates
    */
   function bindEvents() {
-    elements.navButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const targetView = e.currentTarget.dataset.view;
-        if (targetView) {
-          navigateTo(targetView);
+    // Tab switcher event listener
+    const tabs = document.querySelectorAll('.nav-tab');
+    const views = document.querySelectorAll('.app-view');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = tab.getAttribute('data-target');
+
+        // Update active tab style
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Show selected view, hide others
+        views.forEach(view => {
+          if (view.id === targetId) {
+            view.classList.remove('hidden');
+            view.classList.add('active');
+          } else {
+            view.classList.add('hidden');
+            view.classList.remove('active');
+          }
+        });
+
+        // Trigger view-specific rendering
+        if (targetId === 'view-dashboard') {
+          state.currentView = 'dashboard';
+          renderDashboard();
+        } else if (targetId === 'view-schedule') {
+          state.currentView = 'schedule';
+          if (window.SkillFlowScheduler && typeof window.SkillFlowScheduler.renderSchedule === 'function') {
+            window.SkillFlowScheduler.renderSchedule();
+          }
+        } else if (targetId === 'view-roadmap') {
+          state.currentView = 'roadmap';
+          if (window.SkillFlowRoadmap && typeof window.SkillFlowRoadmap.renderRoadmap === 'function') {
+            window.SkillFlowRoadmap.renderRoadmap();
+          }
         }
       });
     });
@@ -314,12 +347,13 @@
           elements.views.onboarding.style.display = 'block';
           elements.views.onboarding.classList.add('active');
         }
-        Object.entries(elements.views).forEach(([name, container]) => {
-          if (container && name !== 'onboarding') {
-            container.classList.remove('active');
-          }
+        const views = document.querySelectorAll('.app-view');
+        views.forEach(view => {
+          view.classList.add('hidden');
+          view.classList.remove('active');
         });
-        elements.navButtons.forEach(btn => btn.classList.remove('active'));
+        const tabs = document.querySelectorAll('.nav-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
         state.currentView = 'onboarding';
         if (elements.views.onboarding) {
           elements.views.onboarding.scrollIntoView({ behavior: 'smooth' });
