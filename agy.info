@@ -7,6 +7,45 @@ Directory structure () - defines the directory structure and files inside this r
 Inside <directory_name> in <file_name> - tells which file inside which repository to perform the action
 ------------------------------------------------------
 
-System Directive: Workflow Reference
-Instructions and structure specifications for repository actions.
------------------------------------------------------------
+Directory structure (
+Skillflow/
+├── index.html                # Main application dashboard, roadmap, and daily schedule views
+├── auth.html                 # Mandatory authentication entry and login interface
+├── agy.info                  # Repository workflow documentation and task tracking
+├── README.md                 # Project description, guidelines, and overview
+├── LICENSE                   # Open-source license
+├── css/
+│   ├── styles.css            # Main application styles, design tokens, tab switcher utilities
+│   └── auth.css              # Authentication split-screen layout and visual styling
+├── js/
+│   ├── app.js                # App bootstrap, auth guard, view switcher orchestration
+│   ├── auth.js               # Authentication form validation, session storage, redirects
+│   ├── onboarding.js         # Track selection, experience level, and budget configuration
+│   ├── roadmap.js            # Learning path stage graph, prerequisite tracking, and rendering
+│   ├── scheduler.js          # Deterministic task scheduling engine and adaptive rescheduling
+│   └── storeage.js           # LocalStorage persistence utility helpers
+└── data/
+    └── learning-paths.json   # Structured curriculum tracks (Frontend & Python Data Analysis)
+)
+
+Action DONE (
+1. Built structured curriculum tracks in data/learning-paths.json.
+2. Built student onboarding flow with goal, level, and daily budget selection.
+3. Implemented deterministic task scheduler and roadmap visualization.
+4. Added adaptive rescheduling modal ("Find My New Rhythm").
+5. Built responsive authentication interface (auth.html, css/auth.css, js/auth.js).
+6. Enforced mandatory auth guard redirect and persistent session management.
+7. Updated onboarding to run only once and added "Edit Goals" capability.
+8. Implemented multiple-task daily budget packing and budget summary header.
+9. Configured single-page view switching for Dashboard, Roadmap, and Daily Schedule.
+10. Enforced strict daily budget time limits preventing task duration overflow.
+)
+
+Action NOW (
+
+MongoDB
+C++
+REACT
+Vanilla
+
+)
