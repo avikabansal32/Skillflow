@@ -254,12 +254,32 @@
 
     renderSavedProfileCard(verified);
 
-    // Notify application system & other tabs/views
+    // 1. Mark onboarding profile setup as completed
+    localStorage.setItem('skillflow_profile_completed', 'true');
+
+    // 2. Hide onboarding section
+    const onboardingSection = document.getElementById('view-onboarding');
+    if (onboardingSection) {
+      onboardingSection.style.display = 'none';
+      onboardingSection.classList.remove('active');
+    }
+
+    // 3. Notify application system & other tabs/views
     window.dispatchEvent(
       new CustomEvent('skillflow:profile-saved', {
         detail: verified
       })
     );
+
+    // 4. Display main dashboard
+    if (window.SkillFlowApp && typeof window.SkillFlowApp.navigateTo === 'function') {
+      window.SkillFlowApp.navigateTo('dashboard');
+    } else {
+      const dashboardBtn = document.querySelector('.nav-btn[data-view="dashboard"]');
+      if (dashboardBtn) {
+        dashboardBtn.click();
+      }
+    }
   }
 
   /**

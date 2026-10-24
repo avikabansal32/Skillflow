@@ -10,6 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Redirect to dashboard if user is already authenticated -->
+  <script>
+    if (localStorage.getItem('skillflow_user')) {
+      window.location.replace('index.html');
+    }
+  </script>
+
   <!-- Authentication Stylesheet -->
   <link rel="stylesheet" href="css/auth.css">
 </head>

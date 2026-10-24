@@ -7,6 +7,12 @@
 (() => {
   'use strict';
 
+  // If already authenticated, redirect straight to main app to prevent infinite loops
+  if (localStorage.getItem('skillflow_user')) {
+    window.location.replace('index.html');
+    return;
+  }
+
   const STORAGE_USER_KEY = 'skillflow_user';
   const STORAGE_REMEMBER_KEY = 'skillflow_remembered_email';
 
@@ -171,42 +177,22 @@
     const emailValue = elements.inputEmail.value.trim();
     const shouldRemember = elements.checkRemember ? elements.checkRemember.checked : false;
 
-    // Save mock user session in localStorage as requested:
-    // localStorage.setItem('skillflow_user', JSON.stringify({ email: emailValue }))
-    const userSession = {
-      email: emailValue,
-      authenticated: true,
-      loggedInAt: new Date().toISOString()
-    };
-
     try {
-      localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(userSession));
+      // Store session in localStorage as requested:
+      // localStorage.setItem('skillflow_user', JSON.stringify({ email: emailInput.value }));
+      localStorage.setItem('skillflow_user', JSON.stringify({ email: emailValue }));
 
-      // Remember email across sessions if checked
       if (shouldRemember) {
         localStorage.setItem(STORAGE_REMEMBER_KEY, emailValue);
       } else {
         localStorage.removeItem(STORAGE_REMEMBER_KEY);
       }
-
-      console.info('SkillFlow [Auth]: Mock user session saved to localStorage ("skillflow_user"):', userSession);
     } catch (err) {
       console.warn('SkillFlow [Auth]: Could not persist user session to localStorage', err);
     }
 
-    // Success feedback and smooth transition
-    showFeedback('✓ Welcome back! Loading your dashboard...', 'success');
-
-    if (elements.btnSubmit) {
-      elements.btnSubmit.disabled = true;
-      elements.btnSubmit.style.opacity = '0.85';
-      elements.btnSubmit.querySelector('span').textContent = 'Signing in...';
-    }
-
-    // Smooth redirect to the main dashboard (index.html)
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 600);
+    // Immediately redirect to main app using window.location.replace
+    window.location.replace('index.html');
   }
 
   /**

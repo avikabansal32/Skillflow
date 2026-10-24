@@ -10,6 +10,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Mandatory Auth Guard & Onboarding State Check -->
+  <script>
+    if (!localStorage.getItem('skillflow_user')) {
+      window.location.replace('auth.html');
+    }
+    if (localStorage.getItem('skillflow_profile_completed') === 'true') {
+      document.documentElement.classList.add('profile-completed');
+    }
+  </script>
+
   <!-- Application Styles -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -27,7 +37,8 @@
         <button type="button" class="nav-btn" data-view="dashboard">Dashboard</button>
         <button type="button" class="nav-btn" data-view="roadmap">Roadmap</button>
         <button type="button" class="nav-btn" data-view="schedule">Daily Schedule</button>
-        <a href="auth.html" class="nav-btn auth-nav-link" style="border: 1px solid var(--color-border); margin-left: 0.5rem;">Account</a>
+        <button type="button" class="nav-btn btn-edit-goals" id="btn-edit-goals" title="Modify your learning goal, level, or daily budget" style="display: none;">Edit Goals</button>
+        <button type="button" class="nav-btn btn-logout" id="btn-logout" title="Log out of SkillFlow">Log Out</button>
       </nav>
     </div>
   </header>

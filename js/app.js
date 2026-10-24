@@ -6,6 +6,12 @@
 (() => {
   'use strict';
 
+  // Mandatory Auth Guard
+  if (!localStorage.getItem('skillflow_user')) {
+    window.location.replace('auth.html');
+    return;
+  }
+
   // Application State
   const state = {
     currentView: 'onboarding',
@@ -41,6 +47,11 @@
   function navigateTo(viewName) {
     if (!elements.views[viewName]) return;
 
+    const isCompleted = localStorage.getItem('skillflow_profile_completed') === 'true';
+    if (!isCompleted && viewName !== 'onboarding') {
+      return; // Force onboarding completion first
+    }
+
     // Update active nav button
     elements.navButtons.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.view === viewName);
@@ -49,7 +60,15 @@
     // Toggle active view container
     Object.entries(elements.views).forEach(([name, container]) => {
       if (container) {
-        container.classList.toggle('active', name === viewName);
+        if (name === viewName) {
+          container.style.display = 'block';
+          container.classList.add('active');
+        } else {
+          container.classList.remove('active');
+          if (name === 'onboarding' && isCompleted) {
+            container.style.display = 'none';
+          }
+        }
       }
     });
 
@@ -57,6 +76,85 @@
 
     if (viewName === 'dashboard') {
       renderDashboard();
+    }
+  }
+
+  /**
+   * Apply onboarding visibility and access gating rules:
+   * Keep setup form hidden once profile is completed.
+   */
+  function applyOnboardingGating() {
+    const isCompleted = localStorage.getItem('skillflow_profile_completed') === 'true';
+    const navOnboarding = document.querySelector('.nav-btn[data-view="onboarding"]');
+    const btnEditGoals = document.getElementById('btn-edit-goals');
+
+    if (isCompleted) {
+      // 1. Keep the onboarding container hidden
+      if (elements.views.onboarding) {
+        elements.views.onboarding.style.display = 'none';
+        elements.views.onboarding.classList.remove('active');
+      }
+
+      // Hide the initial "Onboarding" nav tab
+      if (navOnboarding) {
+        navOnboarding.style.display = 'none';
+      }
+
+      // Show "Edit Goals" button in navbar
+      if (btnEditGoals) {
+        btnEditGoals.style.display = 'inline-flex';
+      }
+
+      // Directly show and enable main app nav buttons (Dashboard, Roadmap, Schedule)
+      elements.navButtons.forEach(btn => {
+        if (btn.dataset.view && btn.dataset.view !== 'onboarding') {
+          btn.style.display = 'inline-flex';
+          btn.disabled = false;
+        }
+      });
+
+      // Directly render and show the dashboard
+      if (state.currentView === 'onboarding' || !state.currentView) {
+        navigateTo('dashboard');
+      } else {
+        navigateTo(state.currentView);
+      }
+    } else {
+      // 2. Profile NOT completed: Show onboarding container & keep main dashboard hidden
+      if (elements.views.onboarding) {
+        elements.views.onboarding.style.display = 'block';
+        elements.views.onboarding.classList.add('active');
+      }
+
+      // Keep dashboard, roadmap, schedule containers hidden
+      if (elements.views.dashboard) {
+        elements.views.dashboard.classList.remove('active');
+      }
+      if (elements.views.roadmap) {
+        elements.views.roadmap.classList.remove('active');
+      }
+      if (elements.views.schedule) {
+        elements.views.schedule.classList.remove('active');
+      }
+
+      // Show only Onboarding tab as active
+      if (navOnboarding) {
+        navOnboarding.style.display = 'inline-flex';
+        navOnboarding.classList.add('active');
+      }
+
+      if (btnEditGoals) {
+        btnEditGoals.style.display = 'none';
+      }
+
+      // Hide main app nav tabs until onboarding is completed
+      elements.navButtons.forEach(btn => {
+        if (btn.dataset.view && btn.dataset.view !== 'onboarding') {
+          btn.style.display = 'none';
+        }
+      });
+
+      state.currentView = 'onboarding';
     }
   }
 
@@ -109,9 +207,12 @@
             <span class="highlight-pill">${profile ? 'Active Learning Goal' : 'Default Preview'}</span>
             <h2 class="schedule-hero-title" style="margin-top: 0.5rem;">${trackTitle}</h2>
           </div>
-          <button type="button" class="btn-primary" id="dash-btn-schedule">
-            View Today's Schedule &rarr;
-          </button>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn-preset" id="dash-btn-edit-goals">Edit Goals</button>
+            <button type="button" class="btn-primary" id="dash-btn-schedule">
+              View Today's Schedule &rarr;
+            </button>
+          </div>
         </div>
 
         <div class="roadmap-stats-row">
@@ -162,10 +263,19 @@
     const btnSched1 = elements.mounts.dashboard.querySelector('#dash-btn-schedule');
     const btnSched2 = elements.mounts.dashboard.querySelector('#dash-link-schedule');
     const btnRoadmap = elements.mounts.dashboard.querySelector('#dash-link-roadmap');
+    const btnDashEditGoals = elements.mounts.dashboard.querySelector('#dash-btn-edit-goals');
 
     if (btnSched1) btnSched1.addEventListener('click', () => navigateTo('schedule'));
     if (btnSched2) btnSched2.addEventListener('click', () => navigateTo('schedule'));
     if (btnRoadmap) btnRoadmap.addEventListener('click', () => navigateTo('roadmap'));
+    if (btnDashEditGoals) {
+      btnDashEditGoals.addEventListener('click', () => {
+        const btnEditGoals = document.getElementById('btn-edit-goals');
+        if (btnEditGoals) {
+          btnEditGoals.click();
+        }
+      });
+    }
   }
 
   /**
@@ -202,9 +312,8 @@
     window.addEventListener('skillflow:profile-saved', (e) => {
       state.userProfile = e.detail;
       console.log('SkillFlow [App]: Profile updated event received in app controller:', state.userProfile);
-      if (state.currentView === 'dashboard') {
-        renderDashboard();
-      }
+      applyOnboardingGating();
+      navigateTo('dashboard');
     });
 
     // React when user marks tasks completed
@@ -213,6 +322,36 @@
         renderDashboard();
       }
     });
+
+    // Edit Goals button handler
+    const btnEditGoals = document.getElementById('btn-edit-goals');
+    if (btnEditGoals) {
+      btnEditGoals.addEventListener('click', () => {
+        if (elements.views.onboarding) {
+          elements.views.onboarding.style.display = 'block';
+          elements.views.onboarding.classList.add('active');
+        }
+        Object.entries(elements.views).forEach(([name, container]) => {
+          if (container && name !== 'onboarding') {
+            container.classList.remove('active');
+          }
+        });
+        elements.navButtons.forEach(btn => btn.classList.remove('active'));
+        state.currentView = 'onboarding';
+        if (elements.views.onboarding) {
+          elements.views.onboarding.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+
+    // Mandatory Log Out handler
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+      btnLogout.addEventListener('click', () => {
+        localStorage.removeItem('skillflow_user');
+        window.location.replace('auth.html');
+      });
+    }
   }
 
   /**
@@ -231,17 +370,16 @@
   }
 
   /**
-   * Update header account link if user is signed in
+   * Update header user indicator if user is signed in
    */
   function updateAuthIndicator() {
     try {
       const rawUser = localStorage.getItem('skillflow_user');
-      const authLink = document.querySelector('.auth-nav-link');
-      if (rawUser && authLink) {
+      const btnLogout = document.getElementById('btn-logout');
+      if (rawUser && btnLogout) {
         const user = JSON.parse(rawUser);
         if (user && user.email) {
-          authLink.textContent = user.email.split('@')[0];
-          authLink.title = `Signed in as ${user.email}`;
+          btnLogout.title = `Signed in as ${user.email} • Click to log out`;
         }
       }
     } catch (e) {}
@@ -255,8 +393,16 @@
     checkPersistedProfile();
     updateAuthIndicator();
     await loadLearningPaths();
+    applyOnboardingGating();
     console.log('SkillFlow initialized.');
   }
+
+  // Public API
+  window.SkillFlowApp = {
+    navigateTo,
+    applyOnboardingGating,
+    renderDashboard
+  };
 
   // Bootstrap when DOM is fully parsed
   document.addEventListener('DOMContentLoaded', init);
