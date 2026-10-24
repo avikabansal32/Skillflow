@@ -676,3 +676,93 @@ button, input {
     margin-bottom: 1.5rem;
   }
 }
+
+/* ==========================================================================
+   Signup Popup Window / Modal — Pop.window(signup)
+   ========================================================================== */
+.auth-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(51, 42, 37, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+  padding: 1.5rem;
+}
+
+.auth-modal-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.auth-modal-card {
+  position: relative;
+  background-color: var(--bg-floral-white);
+  border: 1px solid var(--border-warm-beige);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(51, 42, 37, 0.16);
+  width: 100%;
+  max-width: 480px;
+  padding: 2.25rem 2rem;
+  transform: translateY(16px) scale(0.98);
+  transition: transform var(--transition-normal);
+}
+
+.auth-modal-backdrop.is-open .auth-modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.btn-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color var(--transition-fast);
+}
+
+.btn-modal-close:hover {
+  color: var(--text-cocoa-noir);
+}
+
+.auth-modal-header {
+  margin-bottom: 1.5rem;
+}
+
+.auth-modal-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--accent-black-olive);
+  background-color: var(--bg-soft-ivory);
+  border-radius: 9999px;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.auth-modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-cocoa-noir);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.auth-modal-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+

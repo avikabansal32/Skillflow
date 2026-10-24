@@ -1,0 +1,32 @@
+[
+  {
+    "id": "usr_001",
+    "email": "learner@skillflow.io",
+    "name": "Alex Rivera",
+    "password": "password123",
+    "profileCompleted": true,
+    "track": "frontend-dev",
+    "level": "beginner",
+    "dailyTime": 60
+  },
+  {
+    "id": "usr_002",
+    "email": "demo@skillflow.io",
+    "name": "Taylor Chen",
+    "password": "demo1234",
+    "profileCompleted": true,
+    "track": "python-data",
+    "level": "intermediate",
+    "dailyTime": 45
+  },
+  {
+    "id": "usr_1792831386",
+    "email": "newstudent@skillflow.io",
+    "name": "New Student",
+    "password": "mypass123",
+    "profileCompleted": false,
+    "track": "frontend-dev",
+    "level": "beginner",
+    "dailyTime": 60
+  }
+]

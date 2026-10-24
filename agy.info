@@ -24,8 +24,13 @@ Skillflow/
 │   ├── roadmap.js            # Learning path stage graph, prerequisite tracking, and rendering
 │   ├── scheduler.js          # Deterministic task scheduling engine and adaptive rescheduling
 │   └── storeage.js           # LocalStorage persistence utility helpers
-└── data/
-    └── learning-paths.json   # Structured curriculum tracks (Frontend & Python Data Analysis)
+├── data/
+│   └── learning-paths.json   # Structured curriculum tracks (Frontend & Python Data Analysis)
+├── backend/
+│   └── login.cpp             # User verification, local database authentication, and signup popup triggers
+└── dbs/
+    ├── init_mongo.js         # Mongosh database initialization script for collections and indexes
+    └── users.json            # Local user credentials datastore for verification
 )
 
 Action DONE (
@@ -43,9 +48,13 @@ Action DONE (
 
 Action NOW (
 
-MongoDB
-C++
-REACT
-Vanilla
+Inside backend in login.cpp -
+Make login.cpp such tht every time a user logins , the backend checks if user exists at local database 
+If user exists :
+Validate
+Else :
+Pop.window(signup)
+
+Update other files accordingly
 
 )
