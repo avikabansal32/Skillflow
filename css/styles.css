@@ -537,3 +537,546 @@ button {
   font-weight: 600;
   color: var(--heading-color);
 }
+
+/* ==========================================================================
+   Progress Bars & Metric Gauges
+   ========================================================================== */
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin: var(--spacing-sm) 0;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+
+.progress-label {
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.progress-value {
+  font-weight: 700;
+  color: var(--primary-action);
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background-color: rgba(62, 47, 32, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-action);
+  border-radius: 9999px;
+  transition: width 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-fill.amber {
+  background-color: var(--deadline-alert);
+}
+
+.progress-fill.peach {
+  background-color: var(--highlight-color);
+}
+
+/* ==========================================================================
+   Scheduler & Daily Planner Styles
+   ========================================================================== */
+.schedule-hero {
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.schedule-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.schedule-hero-title {
+  font-size: var(--font-size-xl);
+  color: var(--heading-color);
+}
+
+.schedule-track-pill {
+  background-color: var(--highlight-color);
+  color: var(--heading-color);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.budget-gauge-box {
+  background-color: var(--bg-main);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-top: var(--spacing-sm);
+}
+
+.budget-gauge-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+.schedule-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.schedule-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.schedule-section-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--heading-color);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Task Item Component */
+.task-item {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  transition: all var(--transition-fast);
+}
+
+.task-item:hover {
+  border-color: rgba(85, 107, 47, 0.4);
+  box-shadow: var(--shadow-sm);
+}
+
+.task-item.completed {
+  background-color: rgba(85, 107, 47, 0.04);
+  border-color: rgba(85, 107, 47, 0.3);
+}
+
+.task-item.completed .task-title {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.task-item.locked {
+  background-color: rgba(62, 47, 32, 0.02);
+  border-style: dashed;
+  opacity: 0.75;
+}
+
+.task-checkbox-wrapper {
+  padding-top: 0.15rem;
+}
+
+.task-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--primary-action);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.task-body {
+  flex: 1;
+}
+
+.task-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.task-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.task-meta-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.badge-duration {
+  background-color: var(--highlight-color);
+  color: var(--heading-color);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.badge-stage {
+  background-color: var(--bg-main);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.badge-status {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+}
+
+.badge-status.scheduled {
+  background-color: rgba(85, 107, 47, 0.15);
+  color: var(--primary-action);
+}
+
+.badge-status.exceeded {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #B45309;
+}
+
+.badge-status.locked {
+  background-color: rgba(62, 47, 32, 0.08);
+  color: var(--color-text-muted);
+}
+
+.task-prereqs {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.prereq-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.725rem;
+}
+
+.prereq-tag.met {
+  background-color: rgba(85, 107, 47, 0.1);
+  color: var(--primary-action);
+  font-weight: 500;
+}
+
+.prereq-tag.unmet {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #9A3412;
+  font-weight: 500;
+}
+
+/* Empty & Congratulatory States */
+.state-box {
+  background-color: var(--bg-card);
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.state-box h3 {
+  margin-bottom: var(--spacing-xs);
+}
+
+.state-box p {
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
+}
+
+/* ==========================================================================
+   Roadmap Tree View Styles
+   ========================================================================== */
+.roadmap-hero {
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.roadmap-hero-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.roadmap-stats-row {
+  display: flex;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-md);
+}
+
+.roadmap-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.roadmap-stat-val {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.roadmap-stat-lbl {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stages-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.stage-card {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.stage-card-header {
+  background-color: rgba(62, 47, 32, 0.02);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-lg);
+}
+
+.stage-header-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stage-order-tag {
+  background-color: var(--primary-action);
+  color: #FFFFFF;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.stage-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-sm);
+}
+
+.stage-card-body {
+  padding: var(--spacing-lg);
+}
+
+/* ==========================================================================
+   Adaptive Rescheduling & Modal Styles
+   ========================================================================== */
+.btn-rhythm {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--primary-action);
+  color: var(--primary-action);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-rhythm:hover {
+  background-color: var(--primary-action);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.btn-rhythm:active {
+  transform: translateY(0);
+}
+
+.btn-rhythm svg {
+  color: inherit;
+}
+
+/* Adaptive Status Banner */
+.adaptive-banner {
+  background-color: rgba(85, 107, 47, 0.08);
+  border: 1.5px solid var(--primary-action);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--heading-color);
+  animation: fadeIn var(--transition-normal);
+}
+
+.adaptive-banner-text {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 500;
+}
+
+.badge-status.tomorrow {
+  background-color: rgba(245, 158, 11, 0.18);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-weight: 600;
+}
+
+/* Modal Backdrop & Dialog */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background-color: rgba(62, 47, 32, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  opacity: 1;
+  transition: opacity var(--transition-normal);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+  opacity: 0;
+}
+
+.modal-box {
+  max-width: 580px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1.5px solid var(--color-border);
+  padding: var(--spacing-xl);
+  animation: modalScaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleUp {
+  from {
+    transform: scale(0.96) translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.modal-close-btn {
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+  color: var(--heading-color);
+  background-color: var(--bg-main);
+}
+
+.modal-encouragement {
+  font-size: var(--font-size-base);
+  color: var(--heading-color);
+  line-height: 1.55;
+  background-color: rgba(249, 200, 180, 0.28);
+  border-left: 4px solid var(--primary-action);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-weight: 500;
+  margin-bottom: var(--spacing-md);
+}
+
+.adaptive-preview-summary {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--bg-main);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+}
+
+.modal-footer {
+  margin-top: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+}

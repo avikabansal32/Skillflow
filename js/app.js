@@ -54,6 +54,118 @@
     });
 
     state.currentView = viewName;
+
+    if (viewName === 'dashboard') {
+      renderDashboard();
+    }
+  }
+
+  /**
+   * Render Dashboard Overview with real-time metrics
+   */
+  function renderDashboard() {
+    if (!elements.mounts.dashboard) return;
+
+    const profile = state.userProfile || (() => {
+      try {
+        const raw = localStorage.getItem('skillflow_user_profile');
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    })();
+
+    let completions = {};
+    try {
+      const rawComp = localStorage.getItem('skillflow_task_completions');
+      if (rawComp) completions = JSON.parse(rawComp);
+    } catch (e) {}
+
+    const activeTrackId = profile ? profile.trackId : 'frontend-web-development';
+    const activeTrack = state.learningPaths.find(t => t.id === activeTrackId) || state.learningPaths[0];
+
+    let totalTasks = 0;
+    let completedTasks = 0;
+    let totalMinutes = 0;
+
+    if (activeTrack && activeTrack.stages) {
+      activeTrack.stages.forEach(stage => {
+        (stage.tasks || []).forEach(task => {
+          totalTasks++;
+          totalMinutes += task.durationMin || 0;
+          if (completions[task.id]) completedTasks++;
+        });
+      });
+    }
+
+    const overallPct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+    const dailyBudget = profile ? profile.dailyBudgetMin : 60;
+    const trackTitle = activeTrack ? activeTrack.title : 'Frontend Web Development';
+
+    elements.mounts.dashboard.innerHTML = `
+      <div class="schedule-hero">
+        <div class="schedule-hero-header">
+          <div>
+            <span class="highlight-pill">${profile ? 'Active Learning Goal' : 'Default Preview'}</span>
+            <h2 class="schedule-hero-title" style="margin-top: 0.5rem;">${trackTitle}</h2>
+          </div>
+          <button type="button" class="btn-primary" id="dash-btn-schedule">
+            View Today's Schedule &rarr;
+          </button>
+        </div>
+
+        <div class="roadmap-stats-row">
+          <div class="roadmap-stat-item">
+            <span class="roadmap-stat-val">${completedTasks} / ${totalTasks}</span>
+            <span class="roadmap-stat-lbl">Tasks Mastered</span>
+          </div>
+          <div class="roadmap-stat-item">
+            <span class="roadmap-stat-val">${overallPct}%</span>
+            <span class="roadmap-stat-lbl">Roadmap Progress</span>
+          </div>
+          <div class="roadmap-stat-item">
+            <span class="roadmap-stat-val">${dailyBudget} min</span>
+            <span class="roadmap-stat-lbl">Daily Target</span>
+          </div>
+        </div>
+
+        <div class="progress-container" style="margin-top: 1.5rem;">
+          <div class="progress-meta">
+            <span class="progress-label">Overall Completion</span>
+            <span class="progress-value">${overallPct}%</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuenow="${overallPct}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill" style="width: ${overallPct}%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-grid" style="margin-top: 1.5rem;">
+        <div class="card" style="padding: 1.25rem;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">📅 Daily Schedule</h3>
+          <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+            Work through today's allocated tasks tailored to your ${dailyBudget}-min budget.
+          </p>
+          <button type="button" class="btn-primary" style="font-size: 0.85rem;" id="dash-link-schedule">Open Daily Planner</button>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">🗺️ Structured Roadmap</h3>
+          <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+            Explore sequential stages, prerequisite graphs, and full curriculum milestones.
+          </p>
+          <button type="button" class="btn-preset" style="font-size: 0.85rem;" id="dash-link-roadmap">View Roadmap</button>
+        </div>
+      </div>
+    `;
+
+    const btnSched1 = elements.mounts.dashboard.querySelector('#dash-btn-schedule');
+    const btnSched2 = elements.mounts.dashboard.querySelector('#dash-link-schedule');
+    const btnRoadmap = elements.mounts.dashboard.querySelector('#dash-link-roadmap');
+
+    if (btnSched1) btnSched1.addEventListener('click', () => navigateTo('schedule'));
+    if (btnSched2) btnSched2.addEventListener('click', () => navigateTo('schedule'));
+    if (btnRoadmap) btnRoadmap.addEventListener('click', () => navigateTo('roadmap'));
   }
 
   /**
@@ -90,6 +202,16 @@
     window.addEventListener('skillflow:profile-saved', (e) => {
       state.userProfile = e.detail;
       console.log('SkillFlow [App]: Profile updated event received in app controller:', state.userProfile);
+      if (state.currentView === 'dashboard') {
+        renderDashboard();
+      }
+    });
+
+    // React when user marks tasks completed
+    window.addEventListener('skillflow:task-toggled', () => {
+      if (state.currentView === 'dashboard') {
+        renderDashboard();
+      }
     });
   }
 

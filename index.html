@@ -173,41 +173,93 @@
 
     <!-- 2. Dashboard View Container -->
     <section id="view-dashboard" class="view-container" aria-labelledby="title-dashboard">
-      <div class="card">
-        <h2 id="title-dashboard">Student Dashboard</h2>
-        <p>Track overall roadmap completion, upcoming milestones, and weekly study streaks.</p>
-        <div id="dashboard-container" class="view-content-mount">
-          <!-- Dashboard widgets and metrics mount here -->
-        </div>
+      <div id="dashboard-container" class="view-content-mount">
+        <!-- Dashboard widgets and metrics mount dynamically -->
       </div>
     </section>
 
     <!-- 3. Roadmap View Container -->
     <section id="view-roadmap" class="view-container" aria-labelledby="title-roadmap">
-      <div class="card">
-        <h2 id="title-roadmap">Personalized Roadmap</h2>
-        <p>Structured milestones, key skill gaps, and learning modules arranged sequentially.</p>
-        <div id="roadmap-container" class="view-content-mount">
-          <!-- Interactive roadmap tree mounts here -->
-        </div>
+      <div id="roadmap-container" class="view-content-mount">
+        <!-- Interactive roadmap tree mounts dynamically -->
       </div>
     </section>
 
     <!-- 4. Daily Schedule View Container -->
     <section id="view-schedule" class="view-container" aria-labelledby="title-schedule">
-      <div class="card">
-        <h2 id="title-schedule">Daily Schedule &amp; Planner</h2>
-        <p>Targeted tasks for today, duration blocks, and adaptive reschedule triggers.</p>
-        <div id="schedule-container" class="view-content-mount">
-          <!-- Daily schedule timeline and task checklist mount here -->
-        </div>
+      <div id="schedule-container" class="view-content-mount">
+        <!-- Daily schedule timeline and task checklist mount dynamically -->
       </div>
     </section>
 
   </main>
 
+  <!-- Adaptive Rescheduling Modal -->
+  <div id="reschedule-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="reschedule-modal-title" hidden>
+    <div class="modal-box card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="highlight-pill">Adaptive Planner</span>
+          <h2 id="reschedule-modal-title" style="font-size: var(--font-size-xl);">Find My New Rhythm 🎯</h2>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-modal" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-encouragement">
+          Plans change. Let's make a new one. We'll reorganize your unfinished tasks around the time you have available.
+        </p>
+
+        <div class="form-fieldset" style="margin-top: 1.25rem;">
+          <label for="adaptive-time-input" class="form-legend" style="font-size: 1rem; margin-bottom: 0.5rem;">
+            How much study time do you have left today?
+          </label>
+          
+          <div class="budget-input-wrapper">
+            <div class="budget-presets" role="group" aria-label="Quick time options">
+              <button type="button" class="btn-preset modal-time-preset" data-mins="15">15 min</button>
+              <button type="button" class="btn-preset modal-time-preset active" data-mins="30">30 min</button>
+              <button type="button" class="btn-preset modal-time-preset" data-mins="45">45 min</button>
+              <button type="button" class="btn-preset modal-time-preset" data-mins="60">60 min</button>
+            </div>
+
+            <div class="input-with-affix">
+              <input
+                type="number"
+                id="adaptive-time-input"
+                min="0"
+                max="240"
+                step="5"
+                value="30"
+                aria-label="Adjusted time in minutes"
+              >
+              <span class="input-affix">mins left</span>
+            </div>
+          </div>
+          <span class="input-hint" id="modal-time-hint">
+            We will preserve all prerequisites, fit eligible tasks into this time, and gently move overflow tasks into tomorrow's queue.
+          </span>
+        </div>
+
+        <div id="modal-preview-summary" class="adaptive-preview-summary">
+          <!-- Dynamic summary populated by scheduler.js -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-preset" id="btn-cancel-reschedule">Keep Current Plan</button>
+        <button type="button" class="btn-primary" id="btn-apply-reschedule">
+          <span>Apply New Rhythm</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Application Scripts -->
   <script src="js/onboarding.js" defer></script>
+  <script src="js/roadmap.js" defer></script>
+  <script src="js/scheduler.js" defer></script>
   <script src="js/app.js" defer></script>
 </body>
 </html>

@@ -88,12 +88,12 @@
 
   /**
    * Render feedback message banner
-   * @param {string} message
+   * @param {string} htmlMessage
    * @param {'success'|'error'} type
    */
-  function showFeedback(message, type = 'success') {
+  function showFeedback(htmlMessage, type = 'success') {
     if (!elements.feedback) return;
-    elements.feedback.textContent = message;
+    elements.feedback.innerHTML = htmlMessage;
     elements.feedback.className = `onboarding-feedback ${type}`;
     elements.feedback.hidden = false;
 
@@ -243,7 +243,12 @@
 
     // Display confirmation and verified details
     showFeedback(
-      `✓ Preferences saved! Track: "${verified.trackTitle}" | Level: ${verified.experienceLevel.toUpperCase()} | Budget: ${verified.dailyBudgetMin} mins/day. (Verified in localStorage)`,
+      `<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <span>✓ <strong>Preferences saved!</strong> Goal: <em>${verified.trackTitle}</em> | Level: ${verified.experienceLevel.toUpperCase()} | Budget: ${verified.dailyBudgetMin} mins/day.</span>
+        <button type="button" class="btn-primary" style="font-size: 0.8rem; padding: 0.35rem 0.85rem;" onclick="document.querySelector('[data-view=schedule]').click()">
+          Go to Today's Schedule &rarr;
+        </button>
+      </div>`,
       'success'
     );
 
