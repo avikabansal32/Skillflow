@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillFlow — Sign In / Create Account</title>
+
+  <!-- Inter Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Authentication Stylesheet -->
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <div class="auth-page">
+    
+    <!-- ======================================================================
+         LEFT PANEL (~55% width, #FFF9EF background)
+         ====================================================================== -->
+    <aside class="auth-hero-panel" aria-label="SkillFlow Vision">
+      
+      <!-- Top-left SkillFlow Wordmark -->
+      <a href="index.html" class="brand-wordmark" title="Return to SkillFlow Home">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>SkillFlow</span>
+        <span class="brand-badge">Alpha</span>
+      </a>
+
+      <!-- Central Hero Copy & Miniature Milestone Preview -->
+      <div class="hero-content">
+        <h1 class="hero-headline">Your next chapter starts here.</h1>
+        <p class="hero-support-text">
+          Turn your curiosity into a clear path forward. Build skills, discover new possibilities, and make meaningful progress one step at a time.
+        </p>
+
+        <!-- CSS-based Miniature Milestone Preview with subtle olive connecting lines -->
+        <div class="milestone-preview" aria-label="Curriculum Milestones Preview">
+          <div class="milestone-preview-title">SkillFlow Journey Blueprint</div>
+
+          <!-- Milestone 1 -->
+          <div class="milestone-item active">
+            <div class="milestone-node" aria-hidden="true">1</div>
+            <div class="milestone-content">
+              <div class="milestone-step-title">Learn Python</div>
+              <div class="milestone-step-desc">Core data structures, syntax, and foundational problem solving</div>
+            </div>
+          </div>
+
+          <!-- Milestone 2 -->
+          <div class="milestone-item">
+            <div class="milestone-node" aria-hidden="true">2</div>
+            <div class="milestone-content">
+              <div class="milestone-step-title">Practise with projects</div>
+              <div class="milestone-step-desc">Hands-on exercises tailored to your daily study budget</div>
+            </div>
+          </div>
+
+          <!-- Milestone 3 -->
+          <div class="milestone-item">
+            <div class="milestone-node" aria-hidden="true">3</div>
+            <div class="milestone-content">
+              <div class="milestone-step-title">Build your portfolio</div>
+              <div class="milestone-step-desc">Transform milestone outputs into tangible demonstrables</div>
+            </div>
+          </div>
+
+          <!-- Milestone 4 -->
+          <div class="milestone-item">
+            <div class="milestone-node" aria-hidden="true">4</div>
+            <div class="milestone-content">
+              <div class="milestone-step-title">Track your progress</div>
+              <div class="milestone-step-desc">Adaptive rescheduling and milestone momentum tracking</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left Panel Footer -->
+      <footer class="hero-footer">
+        Small steps. Meaningful progress.
+      </footer>
+
+    </aside>
+
+    <!-- ======================================================================
+         RIGHT PANEL (~45% width, #FFFCF7 background)
+         ====================================================================== -->
+    <main class="auth-form-panel">
+      
+      <!-- Centered container (max-width: 420px) ready to hold the auth form -->
+      <div class="auth-container">
+        
+        <header class="auth-header">
+          <h1 id="auth-heading">Welcome back.</h1>
+          <p id="auth-subheading">Ready to pick up where you left off?</p>
+        </header>
+
+        <!-- Login Form Interface -->
+        <form id="login-form" class="auth-form" novalidate>
+          
+          <!-- 1. Email field -->
+          <div class="form-group">
+            <label for="input-email" class="form-label">Email address</label>
+            <input
+              type="email"
+              id="input-email"
+              name="email"
+              class="form-input"
+              placeholder="you@example.com"
+              required
+              autocomplete="email"
+              aria-describedby="email-error"
+            >
+            <div class="inline-error" id="email-error" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- 2. Password field with accessible show/hide toggle -->
+          <div class="form-group">
+            <label for="input-password" class="form-label">Password</label>
+            <div class="password-input-wrapper">
+              <input
+                type="password"
+                id="input-password"
+                name="password"
+                class="form-input"
+                placeholder="Enter your password"
+                required
+                autocomplete="current-password"
+                aria-describedby="password-error"
+              >
+              <button
+                type="button"
+                class="btn-password-toggle"
+                id="btn-password-toggle"
+                aria-label="Show password"
+                aria-pressed="false"
+                title="Show password"
+              >
+                <!-- Eye icon (shown when hidden) -->
+                <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <!-- Eye-off icon (shown when visible) -->
+                <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="inline-error" id="password-error" role="alert" aria-live="polite"></div>
+          </div>
+
+          <!-- 3. Options row: Remember me & Forgot password? -->
+          <div class="form-row-between">
+            <label class="form-checkbox-label" for="check-remember">
+              <input type="checkbox" id="check-remember" name="remember" checked>
+              <span>Remember me</span>
+            </label>
+            <a href="#" class="form-link" id="link-forgot-password">Forgot password?</a>
+          </div>
+
+          <!-- 4. Primary Button -->
+          <button type="submit" class="btn-auth-submit" id="btn-auth-submit">
+            <span>Sign In</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+
+          <!-- Feedback Status Box -->
+          <div id="auth-feedback" class="auth-feedback" aria-live="polite" hidden></div>
+        </form>
+
+        <!-- Footer link back to Dashboard -->
+        <footer class="auth-footer">
+          <p class="auth-switch-text">
+            Don't have an account?
+            <a href="#" class="form-link" id="link-signup">Sign up</a>
+          </p>
+
+          <a href="index.html" class="auth-return-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>Back to Dashboard</span>
+          </a>
+        </footer>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Client-side Auth Handler Script -->
+  <script src="js/auth.js" defer></script>
+</body>
+</html>

@@ -231,11 +231,29 @@
   }
 
   /**
+   * Update header account link if user is signed in
+   */
+  function updateAuthIndicator() {
+    try {
+      const rawUser = localStorage.getItem('skillflow_user');
+      const authLink = document.querySelector('.auth-nav-link');
+      if (rawUser && authLink) {
+        const user = JSON.parse(rawUser);
+        if (user && user.email) {
+          authLink.textContent = user.email.split('@')[0];
+          authLink.title = `Signed in as ${user.email}`;
+        }
+      }
+    } catch (e) {}
+  }
+
+  /**
    * Initialize SkillFlow Application
    */
   async function init() {
     bindEvents();
     checkPersistedProfile();
+    updateAuthIndicator();
     await loadLearningPaths();
     console.log('SkillFlow initialized.');
   }
