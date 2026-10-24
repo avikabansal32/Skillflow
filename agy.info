@@ -1,0 +1,12 @@
+Inside this repository 
+action NOW () - instructions for task to be executed 
+Action DONE () - past instructions for tasks performed 
+
+Directory structure () - defines the directory structure and files inside this repository 
+
+Inside <directory_name> in <file_name> - tells which file inside which repository to perform the action
+------------------------------------------------------
+
+System Directive: Workflow Reference
+Instructions and structure specifications for repository actions.
+-----------------------------------------------------------
