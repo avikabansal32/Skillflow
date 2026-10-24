@@ -28,5 +28,25 @@
     "track": "frontend-dev",
     "level": "beginner",
     "dailyTime": 60
+  },
+  {
+    "id": "usr_1792831908",
+    "email": "jordan@example.com",
+    "name": "Jordan Lee",
+    "password": "jordanPass",
+    "profileCompleted": false,
+    "track": "frontend-dev",
+    "level": "beginner",
+    "dailyTime": 60
+  },
+  {
+    "id": "usr_1792831987",
+    "email": "samantha@sg1.io",
+    "name": "Samantha Carter",
+    "password": "password123",
+    "profileCompleted": false,
+    "track": "frontend-dev",
+    "level": "beginner",
+    "dailyTime": 60
   }
 ]

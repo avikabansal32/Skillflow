@@ -27,7 +27,8 @@ Skillflow/
 ├── data/
 │   └── learning-paths.json   # Structured curriculum tracks (Frontend & Python Data Analysis)
 ├── backend/
-│   └── login.cpp             # User verification, local database authentication, and signup popup triggers
+│   ├── login.cpp             # User verification, local database authentication, and signup popup triggers
+│   └── signup.cpp            # Signup handler taking <name>.json and storing as BSON in dbs/
 └── dbs/
     ├── init_mongo.js         # Mongosh database initialization script for collections and indexes
     └── users.json            # Local user credentials datastore for verification
@@ -44,17 +45,25 @@ Action DONE (
 8. Implemented multiple-task daily budget packing and budget summary header.
 9. Configured single-page view switching for Dashboard, Roadmap, and Daily Schedule.
 10. Enforced strict daily budget time limits preventing task duration overflow.
+11. Implemented backend/login.cpp for user verification against local db and Pop.window(signup) trigger.
 )
 
 Action NOW (
 
-Inside backend in login.cpp -
-Make login.cpp such tht every time a user logins , the backend checks if user exists at local database 
-If user exists :
-Validate
-Else :
-Pop.window(signup)
+Make signup.cpp
+Such that if a user fills signup page
+Their information is taken in as a <name>.json file 
+Inside json file :
 
-Update other files accordingly
+
+{
+
+Name : <name>
+Email: <email> 
+
+
+}
+
+And stored inside dbs as a bson file
 
 )

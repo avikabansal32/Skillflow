@@ -264,25 +264,39 @@
 
   /**
    * Save a newly registered user to local database and backend
+   * Sends { Name: "<name>", Email: "<email>" } to backend to create <name>.json and store in dbs as .bson
    */
   async function registerNewUser(email, password, name) {
-    // Attempt C++ backend signup
-    try {
-      await fetch(`${BACKEND_API_BASE}/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name })
-      });
-    } catch {
-      // Ignore if offline
+    const displayName = name || 'SkillFlow Learner';
+    const payload = {
+      Name: displayName,
+      Email: email,
+      password: password
+    };
+
+    // Attempt 1: Call C++ Signup microservice (port 8082 or 8080)
+    const signupEndpoints = ['http://127.0.0.1:8082/signup', `${BACKEND_API_BASE}/signup`];
+    for (const endpoint of signupEndpoints) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) break;
+      } catch {
+        // Fall through to next endpoint or local persistence
+      }
     }
 
     // Always persist to local client registry
     try {
       const registered = JSON.parse(localStorage.getItem(STORAGE_LOCAL_USERS_KEY) || '[]');
       registered.push({
-        email,
-        name: name || 'SkillFlow Learner',
+        Name: displayName,
+        Email: email,
+        email: email,
+        name: displayName,
         password,
         profileCompleted: false,
         createdAt: new Date().toISOString()
