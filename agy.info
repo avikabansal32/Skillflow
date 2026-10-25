@@ -46,6 +46,7 @@ Action DONE (
 9. Configured single-page view switching for Dashboard, Roadmap, and Daily Schedule.
 10. Enforced strict daily budget time limits preventing task duration overflow.
 11. Implemented backend/login.cpp for user verification against local db and Pop.window(signup) trigger.
+12. Fixed daily study limit task scheduler: implemented Option B soft-cap overflow so tasks longer than daily budget are never blocked, and guaranteed UI always schedules ready work.
 )
 
 Action NOW (

@@ -211,6 +211,8 @@
     // 1. Let remainingTime = parseInt(userDailyBudget); (e.g., 60)
     let remainingTime = parseInt(budget, 10);
     const totalBudget = remainingTime;
+    const dailyLimit = totalBudget;
+    let currentTimeSpent = 0;
 
     // 2. const todaysTasks = [];
     const todaysTasks = [];
@@ -249,6 +251,10 @@
     const donePrereqs = new Set(completedIds);
 
     // 4. Loop through uncompleted tasks (in order):
+    // Option B (Soft Cap / Overflow):
+    // Allow the scheduler to pick up the next task if the user has not yet spent their daily limit today
+    // (i.e., check current_time_spent < daily_limit before assignment, rather than current_time_spent + task_duration <= daily_limit),
+    // allowing a single overflowing task to complete.
     allOrderedTasks.forEach(task => {
       // Skip completed tasks
       if (task.isCompleted) {
@@ -259,10 +265,15 @@
       const prereqs = task.prerequisites || [];
       const arePrereqsDone = prereqs.every(pId => donePrereqs.has(pId));
 
-      // STRICT RULE: If task.durationMin <= remainingTime
-      if (arePrereqsDone && task.durationMin <= remainingTime) {
-        todaysTasks.push(task);
-        remainingTime -= task.durationMin; // Deduct time
+      // Check if user has not yet reached daily limit today:
+      if (arePrereqsDone && currentTimeSpent < dailyLimit) {
+        const isOverflow = (currentTimeSpent + task.durationMin) > dailyLimit;
+        todaysTasks.push({
+          ...task,
+          isOverflow
+        });
+        currentTimeSpent += task.durationMin;
+        remainingTime = Math.max(0, dailyLimit - currentTimeSpent);
         donePrereqs.add(task.id);
       } else {
         // Task does NOT fit today, save for later!
@@ -276,6 +287,25 @@
       }
     });
 
+    // Safety fallback: Ensure UI never shows "No tasks for today" when there is valid work remaining
+    if (todaysTasks.length === 0) {
+      const firstAvailableTask = allOrderedTasks.find(t => !t.isCompleted && (t.prerequisites || []).every(pId => donePrereqs.has(pId))) || allOrderedTasks.find(t => !t.isCompleted);
+      if (firstAvailableTask) {
+        todaysTasks.push({
+          ...firstAvailableTask,
+          isOverflow: (firstAvailableTask.durationMin || 0) > dailyLimit
+        });
+        currentTimeSpent += (firstAvailableTask.durationMin || 0);
+        remainingTime = Math.max(0, dailyLimit - currentTimeSpent);
+        donePrereqs.add(firstAvailableTask.id);
+
+        const upIdx = upcomingTasks.findIndex(t => t.id === firstAvailableTask.id);
+        if (upIdx !== -1) {
+          upcomingTasks.splice(upIdx, 1);
+        }
+      }
+    }
+
     // Sort upcoming tasks so overflow tasks rescheduled for tomorrow appear first if adaptive
     upcomingTasks.sort((a, b) => {
       const aTomorrow = a.scheduleReason === 'Rescheduled for tomorrow' ? 1 : 0;
@@ -283,7 +313,7 @@
       return bTomorrow - aTomorrow;
     });
 
-    const plannedTime = totalBudget - remainingTime;
+    const plannedTime = currentTimeSpent;
 
     return {
       todaysTasks,
@@ -348,14 +378,14 @@
         if (preview.fittingCount > 0) {
           previewSummary.innerHTML = `
             <strong>⚡ Plan Preview:</strong>
-            ${preview.fittingCount} task (${preview.minsAllocated} mins) fits into today's remaining time.<br>
+            ${preview.fittingCount} task(s) (${preview.minsAllocated} mins) scheduled for today.<br>
             <span style="color: #B45309;">${preview.tomorrowCount} unfinished task(s) gently queued for tomorrow.</span>
           `;
         } else {
           previewSummary.innerHTML = `
             <strong>⚡ Plan Preview:</strong>
-            No single task fits under ${mins} mins.<br>
-            <span style="color: #B45309;">All unfinished tasks will be rescheduled for tomorrow so you can rest guilt-free! 🎉</span>
+            All tasks completed or queued for tomorrow.<br>
+            <span style="color: #B45309;">Take some rest guilt-free! 🎉</span>
           `;
         }
       }
@@ -435,26 +465,9 @@
     let upcomingTasks = schedule.upcomingTasks;
     const userDailyBudget = schedule.totalBudget;
 
-    // Strict guarantee: total minutes of todaysTasks NEVER exceeds the daily budget
+    // Soft Cap / Overflow support:
+    // todaysTasks allows a single overflowing task when user hasn't yet spent their daily limit.
     let totalMinutesOfTodaysTasks = todayTasks.reduce((sum, t) => sum + (t.durationMin || 0), 0);
-    if (totalMinutesOfTodaysTasks > userDailyBudget) {
-      const strictlyFittingTasks = [];
-      let rem = userDailyBudget;
-      todayTasks.forEach(task => {
-        if (task.durationMin <= rem) {
-          strictlyFittingTasks.push(task);
-          rem -= task.durationMin;
-        } else {
-          upcomingTasks.unshift({
-            ...task,
-            scheduleReason: "Exceeds today's budget"
-          });
-        }
-      });
-      todayTasks = strictlyFittingTasks;
-      totalMinutesOfTodaysTasks = userDailyBudget - rem;
-    }
-
     const remainingTime = Math.max(0, userDailyBudget - totalMinutesOfTodaysTasks);
 
     // Metric Calculations
@@ -572,10 +585,16 @@
     `;
 
     if (todayTasks.length === 0) {
+      const allTrackCompleted = allOrderedTasks.length > 0 && allOrderedTasks.every(t => completions[t.id]);
       html += `
         <div class="state-box">
-          <h3>No tasks scheduled for today</h3>
-          <p>${schedule.isAdaptive ? "Your remaining tasks have been queued for tomorrow. Take some rest!" : "You have completed all ready tasks or need to refresh your plan."}</p>
+          <h3>${allTrackCompleted ? "All Track Milestones Completed! 🎉" : "All Caught Up for Today! 🎉"}</h3>
+          <p>${allTrackCompleted
+            ? "Outstanding work! You have finished all learning milestones in this track."
+            : (schedule.isAdaptive 
+                ? "Your remaining tasks have been queued for tomorrow. Take some rest guilt-free!" 
+                : "You have completed all scheduled tasks for today. Advance to your next study session whenever you are ready.")}
+          </p>
           <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
             <button type="button" class="btn-primary" id="btn-replan-today">Re-plan Today</button>
             ${schedule.isAdaptive ? '<button type="button" class="btn-preset" id="btn-reset-adaptive-empty">Reset to Standard Rhythm</button>' : ''}
@@ -608,7 +627,7 @@
                 <div class="task-meta-badges">
                   <span class="badge-duration">${task.durationMin} mins</span>
                   <span class="badge-stage">${task.stageTitle}</span>
-                  <span class="badge-status scheduled">${isDone ? '✓ Completed' : 'Scheduled for Today'}</span>
+                  <span class="badge-status scheduled">${isDone ? '✓ Completed' : (task.isOverflow ? 'Scheduled (Soft Cap)' : 'Scheduled for Today')}</span>
                 </div>
               </div>
 
